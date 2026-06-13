@@ -8,6 +8,6 @@ export const validate = (schema) => (req, res, next) => {
     });
   }
 
-  req.body = result.data; // datos ya parseados y con defaults aplicados
+  req.body = result.data;
   next();
 };

@@ -1,6 +1,5 @@
 import * as paymentService from '../services/payment.service.js';
 
-// POST /api/payments/preference
 export const createPreference = async (req, res) => {
   try {
     const result = await paymentService.createPreference(req.body);
