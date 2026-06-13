@@ -3,8 +3,8 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
+RUN pnpm add -D prisma
 COPY . .
-
 
 RUN pnpm exec prisma generate
 FROM node:22-alpine AS runner
