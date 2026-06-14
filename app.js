@@ -7,7 +7,7 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173').split(',').map(o => o.trim());
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'https://d1cvogky5serqv.cloudfront.net').split(',').map(o => o.trim());
 app.use(cors({
   origin: (origin, cb) => (!origin || allowedOrigins.includes(origin) ? cb(null, true) : cb(new Error('CORS'))),
   credentials: true,
