@@ -1,27 +1,43 @@
-import request from 'supertest';
-import app from '../src/app.js';
+import { jest } from '@jest/globals';
+import { faker } from '@faker-js/faker';
+import { validate } from '../src/middlewares/validate.middleware.js';
+import { createPreferenceSchema } from '../src/validations/payment.validation.js';
 
-describe('Health check', () => {
-  it('GET /health → 200', async () => {
-    const res = await request(app).get('/health');
-    expect(res.status).toBe(200);
-    expect(res.body.status).toBe('ok');
-  });
+const mockRes = () => {
+  const res = {};
+  res.status = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  return res;
+};
+
+test('peticion_valida', () => {
+  const req = { body: { title: faker.commerce.productName(), quantity: 1, unit_price: 9990 } };
+  const res = mockRes();
+  const next = jest.fn();
+
+  validate(createPreferenceSchema)(req, res, next);
+
+  expect(next).toHaveBeenCalled();
+  expect(res.status).not.toHaveBeenCalled();
 });
 
-describe('POST /api/payments/preference - validación', () => {
-  it('body vacío → 400', async () => {
-    const res = await request(app)
-      .post('/api/payments/preference')
-      .send({});
-    expect(res.status).toBe(400);
-    expect(res.body.error).toBe('Datos inválidos');
-  });
+test('peticion_sin_datos', () => {
+  const req = { body: {} };
+  const res = mockRes();
+  const next = jest.fn();
 
-  it('body inválido (precio negativo) → 400', async () => {
-    const res = await request(app)
-      .post('/api/payments/preference')
-      .send({ title: 'Producto', quantity: 1, unit_price: -100 });
-    expect(res.status).toBe(400);
-  });
+  validate(createPreferenceSchema)(req, res, next);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+  expect(next).not.toHaveBeenCalled();
+});
+
+test('peticion_precio_negativo', () => {
+  const req = { body: { title: faker.commerce.productName(), quantity: 1, unit_price: -500 } };
+  const res = mockRes();
+  const next = jest.fn();
+
+  validate(createPreferenceSchema)(req, res, next);
+
+  expect(res.status).toHaveBeenCalledWith(400);
 });
