@@ -6,10 +6,6 @@ dotenv.config();
 
 const app = express();
 
-// Sin CORS propio: este servicio ya no es alcanzable directo desde el navegador
-// (solo dentro de la red de docker), el Gateway es el único que habla con el
-// browser y es quien maneja CORS. Tenerlo en ambos lados duplica la cabecera
-// Access-Control-Allow-Origin y el navegador rechaza la respuesta.
 app.use(express.json());
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
