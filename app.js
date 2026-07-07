@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import paymentRoutes from './src/routes/payment.routes.js';
 
@@ -7,15 +6,10 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
-app.use(cors({
-  origin: allowedOrigins.length > 0 ? allowedOrigins : true,
-  credentials: true,
-}));
+// Sin CORS propio: este servicio ya no es alcanzable directo desde el navegador
+// (solo dentro de la red de docker), el Gateway es el único que habla con el
+// browser y es quien maneja CORS. Tenerlo en ambos lados duplica la cabecera
+// Access-Control-Allow-Origin y el navegador rechaza la respuesta.
 app.use(express.json());
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
